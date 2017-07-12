@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://build-a-blog:tellmemore@localhost:8889/build-a-blog'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://blogz:letsmingle@localhost:8889/blogz'
 # Note: the connection string after :// contains the following info:
 # user:password@server:portNumber/databaseName
 app.config['SQLALCHEMY_ECHO'] = True
@@ -14,10 +14,22 @@ class Blog(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100))
     body = db.Column(db.String(5000))
+    owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
-    def __init__(self, title, body):
+    def __init__(self, title, body, owner):
         self.title = title
         self.body = body
+        self.owner = owner
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(100))
+    password = db.Column(db.String(30))
+    blogs = db.relationship('Blog', backref='owner')
+
+    def __init__(self, username, password):
+        self.username = username
+        self.password = password
 
 
 def validate_title(title):
@@ -62,7 +74,8 @@ def validate():
         if request.method == "POST":
             title_name = request.form['title']
             body_name = request.form['body']
-            new_entry = Blog(title_name, body_name)
+            # owner_name = (fill this in)
+            new_entry = Blog(title_name, body_name) # add owner_name to this list
             db.session.add(new_entry)
             db.session.commit()
         
