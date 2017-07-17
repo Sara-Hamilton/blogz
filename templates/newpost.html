@@ -1,6 +1,6 @@
 {% extends "base.html" %} {% block content %}
 <h1>Add a Blog Entry</h1>
-<form action="/validate" method="POST">
+<form action="/newpost" method="POST">
     <label>
     Title for your new blog:<br/>
     <p class="error">{{title_error}}</p>

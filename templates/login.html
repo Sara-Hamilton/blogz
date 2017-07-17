@@ -1,0 +1,28 @@
+<!-- TODO - This template will be for user login -->
+{% extends "base.html" %} {% block content %}
+<h1>Log in</h1>
+<p><a href="/signup">Create Account</a></p>
+<form action="/login" method="POST">
+    <table>
+        <tr>
+            <td><label for="username">Name</label></td>
+            <td>
+                <input name="username" type="text" value="{{username}}">
+            </td>
+            <td>
+                <p class="error">{{username_error}}</p>
+            </td>
+        </tr>
+        <tr>
+            <td><label for="password">Password</label></td>
+            <td>
+                <input name="password" type="password" , value="{{password}}">
+            </td>
+            <td>
+                <p class="error">{{password_error}}</p>
+            </td>
+        </tr>
+    </table>
+    <input type="submit" value="Login">
+</form>
+{% endblock %}

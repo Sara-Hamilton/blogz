@@ -5,6 +5,7 @@
 {% else %}
 
 <ul style="list-style-type:none">
+    <!-- lists all entries in descending order -->
     {% for entry in entries[::-1] %}
     <li>
         <a href="./blog?id={{entry.id}}">
@@ -12,6 +13,7 @@
         </a>
     </li>
     <li>{{entry.body}}</li>
+    <!--<li>{{entry.owner_id}}</li> TODO - cross reference this to username -->
     </hr>
     {% endfor %}
 </ul>
