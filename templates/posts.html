@@ -8,12 +8,13 @@
     <!-- lists all entries in descending order -->
     {% for entry in entries[::-1] %}
     <li>
-        <a href="./blog?id={{entry.id}}">
+        <a href="./blog?id={{entry.id}}, owner_id={{entry.owner_id}}">
             <h2>{{entry.title}}</h2>
         </a>
     </li>
     <li>{{entry.body}}</li>
-    <!--<li>{{entry.owner_id}}</li> TODO - cross reference this to username -->
+    <li>{{entry.owner_id}} username should be here</li>
+    <!-- TODO - cross reference this to username - SQL subquery for foreign key -->
     </hr>
     {% endfor %}
 </ul>

@@ -11,7 +11,7 @@ db = SQLAlchemy(app)
 app.secret_key = 'dfh7q9DK1*d6'
 
 class Blog(db.Model):
-
+    
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100))
     body = db.Column(db.String(5000))
@@ -23,6 +23,7 @@ class Blog(db.Model):
         self.owner = owner
 
 class User(db.Model):
+    
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(100))
     password = db.Column(db.String(30))
@@ -32,6 +33,11 @@ class User(db.Model):
         self.username = username
         self.password = password
 
+@app.before_request
+def require_login():
+    allowed_routes = ['login', 'list_blogs', 'index', 'signup', 'static']
+    if request.endpoint not in allowed_routes and 'username' not in session:
+        return redirect('/login')
 
 @app.route('/signup', methods=["POST", "GET"])
 def signup():
@@ -102,14 +108,14 @@ def login():
     # verification that user name is filled in and matches a user name in the database
     if username == "":
         username_error = "name field cannot be blank"
-    elif str(username) not in str(users):
-        username_error = "user name not registered"
+    #elif str(username) not in str(users):
+        #username_error = "user name not registered"
         # TODO - make this work
     else:        
         username_error = ""
 
     # verification that password is filled in and matches the password for the given user in the database
-    if password == "" and str(username) in str(users):
+    if password == "": #and str(username) in str(users):
         password_error = "password cannot be blank" 
     # TODO - fix this so that it works - elif password != user.password:
         password_error = "incorrect password"
@@ -121,7 +127,7 @@ def login():
         if request.method == 'POST':
             if user and user.password == password:
                 session['username'] = username
-                flash("Logged in")
+                flash("logged in")
                 return redirect('/newpost') 
 
     # re-renders login template with appropriate error messages if login errors exist
@@ -129,17 +135,22 @@ def login():
         return render_template('login.html', page_title = "login", username = username, username_error = username_error, password_error = password_error)
 
 
-'''
-@app.route('/index', methods=["POST", "GET"])
-def index():
-    # TODO - create
 
-@app.route('/logout', methods=["POST"])
-def logout():
-    # TODO - create - Handles a POST request to /logout and redirects the user to /blog after deleting the user name from the session.
-'''
-@app.route('/blog', methods=["POST", "GET"])
+@app.route('/', methods=["POST", "GET"])
 def index():
+    return render_template('index.html', page_title = "bloggers")
+    
+
+@app.route('/logout')
+def logout():
+    # Handles a POST request to /logout and redirects the user to /blog after deleting the user name from the session.
+    #if session:
+    del session['username']
+    flash("logged out")
+    return redirect('/blog')
+
+@app.route('/blog', methods=["POST", "GET"])
+def list_blogs():
     # define variable using database query
     entries = Blog.query.all()
     
@@ -147,8 +158,9 @@ def index():
     if "id" in request.args:
         id = request.args.get('id')
         entry = Blog.query.get(id)
+        # blogger = User.query.get('username')
         
-        return render_template('entries.html', page_title="blog-post", title = entry.title, body = entry.body)
+        return render_template('entries.html', page_title="blog-post", title = entry.title, body = entry.body, owner = entry.owner)
 
     # displays template posts which displays all entries in descending order
     return render_template('posts.html', page_title="blog", entries = entries)
@@ -183,14 +195,14 @@ def add_entry():
     # if there are no errors, adds new entry to the database and redirects user to entries template
     if not title_error and not body_error:
         if request.method == "POST":
-            # title_name = request.form["title"] # Is this needed?
-            # body_name = request.form["body"]
+            title_name = request.form["title"] # Is this needed?
+            body_name = request.form["body"]
             owner = User.query.filter_by(username =session['username']).first()
             new_entry = Blog(title_name, body_name, owner) 
             db.session.add(new_entry)
             db.session.commit()
         
-        return render_template('entries.html', page_title = "confirmation", title = title, body = body)
+        return render_template('entries.html', page_title = "confirmation", title = title, body = body, owner = owner)
     else:
         # re-renders newpost template with appropriate error messages if errors exist
         return render_template('newpost.html', page_title = "blog", title = title, 

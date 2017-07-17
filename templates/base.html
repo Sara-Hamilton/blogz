@@ -12,12 +12,16 @@
 <header>
     <a name="top"></a>
     <nav>
-        <a href="/blog" class="btn">Main Blog Page</a>
-        <a href="/newpost" class="btn">Add a Blog Entry</a>
+        <a href="/" class="btn">home</a>
+        <a href="/blog" class="btn">all posts</a>
+        <a href="/newpost" class="btn">new post</a>
+        <a href="/login" class="btn">login</a>
+        <a href="/logout" class="btn">logout</a>
     </nav>
 </header>
 
 <body>
+    <!-- Allows for the use of flash messages -->
     {% with messages = get_flashed_messages(with_categories=True) %}
     <ul>
         {% for category,message in messages %}
