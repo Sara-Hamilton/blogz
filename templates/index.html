@@ -1,20 +1,20 @@
 <!-- TODO - This will be the index form -->
 {% extends "base.html" %} {% block content %}
 <h1>Bloggers</h1>
-{% if bloggers|length == 0 %}
+{% if users|length == 0 %}
 <p>No bloggers yet.</p>
 {% else %}
 
 <ul style="list-style-type:none">
     <!-- lists all bloggers in ascending order -->
-    {% for blogger in bloggers %}
+    {% for user in users %}
     <li>
-        <a href="./blog?id={{entry.id}}">
-            <li>{{blogger.username}}</li>
+        <a href="./blog?id={{user.id}}">
+            <li>{{user.username}}</li>
         </a>
     </li>
 
-    <!--<li>{{entry.owner_id}}</li> TODO - cross reference this to username -->
+
     </hr>
     {% endfor %}
 </ul>

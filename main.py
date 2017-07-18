@@ -12,7 +12,7 @@ app.secret_key = 'dfh7q9DK1*d6'
 
 class Blog(db.Model):
     
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key = True)
     title = db.Column(db.String(100))
     body = db.Column(db.String(5000))
     owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
@@ -24,18 +24,20 @@ class Blog(db.Model):
 
 class User(db.Model):
     
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(100))
+    id = db.Column(db.Integer, primary_key = True)
+    username = db.Column(db.String(100), unique = True)
     password = db.Column(db.String(30))
-    blogs = db.relationship('Blog', backref='owner')
+    blogs = db.relationship('Blog', backref = 'owner')
 
     def __init__(self, username, password):
         self.username = username
         self.password = password
 
+
 @app.before_request
 def require_login():
-    allowed_routes = ['login', 'list_blogs', 'index', 'signup', 'static']
+    # requires user be logged in before being allowed to create a new blog post
+    allowed_routes = ['login', 'list_blogs', 'index', 'signup', 'static', 'logout']
     if request.endpoint not in allowed_routes and 'username' not in session:
         return redirect('/login')
 
@@ -94,7 +96,6 @@ def signup():
 
 @app.route('/login', methods=["POST", "GET"])
 def login(): 
-
     # render login template
     if request.method == "GET":
         return render_template('login.html', page_title="login")
@@ -102,22 +103,23 @@ def login():
     # define variables using form entries and database queries
     username = request.form["username"]
     password = request.form["password"]
+    existing = User.query.filter_by(username=username).first()
+    user_password = User.query.filter_by(password=password).first()
     users = User.query.all()
-    user = User.query.filter_by(username=username).first() 
+    user = User.query.filter_by(username=username).first()
 
     # verification that user name is filled in and matches a user name in the database
     if username == "":
         username_error = "name field cannot be blank"
-    #elif str(username) not in str(users):
-        #username_error = "user name not registered"
-        # TODO - make this work
+    elif existing == None:
+        username_error = "user name not registered"
     else:        
         username_error = ""
 
     # verification that password is filled in and matches the password for the given user in the database
-    if password == "": #and str(username) in str(users):
+    if password == "" and existing != None:
         password_error = "password cannot be blank" 
-    # TODO - fix this so that it works - elif password != user.password:
+    elif user_password == None and existing != None:
         password_error = "incorrect password"
     else:
         password_error = ""
@@ -138,15 +140,16 @@ def login():
 
 @app.route('/', methods=["POST", "GET"])
 def index():
-    return render_template('index.html', page_title = "bloggers")
+    # main page shows list of all bloggers
+    users = User.query.all()
+    return render_template('index.html', page_title = "bloggers", users = users)
     
-
 @app.route('/logout')
 def logout():
-    # Handles a POST request to /logout and redirects the user to /blog after deleting the user name from the session.
-    #if session:
-    del session['username']
-    flash("logged out")
+    # redirects the user to /blog after deleting the user name from the session.
+    if session:
+        del session['username']
+        flash("logged out")
     return redirect('/blog')
 
 @app.route('/blog', methods=["POST", "GET"])
@@ -158,7 +161,6 @@ def list_blogs():
     if "id" in request.args:
         id = request.args.get('id')
         entry = Blog.query.get(id)
-        # blogger = User.query.get('username')
         
         return render_template('entries.html', page_title="blog-post", title = entry.title, body = entry.body, owner = entry.owner)
 
