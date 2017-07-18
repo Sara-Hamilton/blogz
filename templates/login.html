@@ -1,7 +1,7 @@
-<!-- TODO - This template will be for user login -->
+<!-- This template is for user login -->
 {% extends "base.html" %} {% block content %}
 <h1>Log in</h1>
-<p><a href="/signup">Create Account</a></p>
+<h2><a href="/signup" class="create">Create New Account</a></h2>
 <form action="/login" method="POST">
     <table>
         <tr>
@@ -23,6 +23,6 @@
             </td>
         </tr>
     </table>
-    <input type="submit" value="Login">
+    <input class="button" class="login" type="submit" value="Login">
 </form>
 {% endblock %}

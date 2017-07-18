@@ -1,3 +1,20 @@
-<!-- TODO This template will be for single users.  This template displays blog entries created by one user. 
+<!-- This template displays all blog entries created by one user. 
     Dynamically generates a page using a GET request with a user query parameter on the /blog route -->
-{% extends "base.html" %} {% block content %} {% endif %} {% endblock %}
+
+{% extends "base.html" %} {% block content %}
+<h1>{{user.username}}'s Blog Posts</h1>
+
+<ul style="list-style-type:none">
+    <!-- lists all entries in descending order -->
+    {% for entry in userEntries[::-1] %}
+    <li>
+        <a href="./blog?id={{entry.id}}&owner_id={{entry.owner_id}}">
+            <h2>{{entry.title}}</h2>
+        </a>
+    </li>
+    <li>{{entry.body}}</li>
+    <li>written by {{entry.owner.username}}</li>
+    <hr></hr>
+    {% endfor %}
+</ul>
+<a class="bottom" href="#top">top of page</a> {% endblock %}

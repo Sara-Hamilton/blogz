@@ -1,4 +1,5 @@
-<!-- TODO - This will be the index form -->
+<!-- This is the index form.  It lists all bloggers with links 
+    that redirect to each blogger's collection of posts. -->
 {% extends "base.html" %} {% block content %}
 <h1>Bloggers</h1>
 {% if users|length == 0 %}
@@ -6,11 +7,12 @@
 {% else %}
 
 <ul style="list-style-type:none">
-    <!-- lists all bloggers in ascending order -->
     {% for user in users %}
-    <li>
-        <a href="./blog?id={{user.id}}">
-            <li>{{user.username}}</li>
+    <li class="bloggers">
+        <a href="./blog?user={{user.id}}">
+            <h2>
+                <li>{{user.username}}</li>
+            </h2>
         </a>
     </li>
 

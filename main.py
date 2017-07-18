@@ -52,30 +52,31 @@ def signup():
     password = request.form["password"]
     verify = request.form["verify"]
     users = User.query.all()
+    existing = User.query.filter_by(username=username).first()
 
     # verification that username is filled in, is more than 3 characters long, and does not match a username in the database
     if username == "":
         username_error = "Name field cannot be blank"
     elif len(username) <= 3:
         username_error = "Name must be at least four characters long"
-    elif str(username) in str(users):
+    elif existing != None:
         username_error = "That username already exists.  Enter a different username."
         # TODO - make this work - make user name unique
     else:        
         username_error = ""
 
     # verification that password is filled in and is more than 3 characters long
-    if password == "":
+    if password == "" and existing == None:
         password_error = "Password field cannot be blank"
-    elif len(password) <= 3:
+    elif len(password) <= 3 and existing == None:
         password_error = "Password must be at least four characters long"
     else:
         password_error = ""
 
     # verification that verify password field is filled in and matches password
-    if verify == "":
+    if verify == "" and existing == None:
         verify_error = "Verify Password field cannot be blank"
-    elif verify != password:
+    elif verify != password and existing == None:
         verify_error = "Passwords do not match"
     else:
         verify_error = ""
@@ -117,9 +118,9 @@ def login():
         username_error = ""
 
     # verification that password is filled in and matches the password for the given user in the database
-    if password == "" and existing != None:
+    if password == "":
         password_error = "password cannot be blank" 
-    elif user_password == None and existing != None:
+    elif password != user.password and existing != None:
         password_error = "incorrect password"
     else:
         password_error = ""
@@ -164,6 +165,14 @@ def list_blogs():
         
         return render_template('entries.html', page_title="blog-post", title = entry.title, body = entry.body, owner = entry.owner)
 
+    # redirects to page showing all blog entries for a specific user when user name is clicked
+    if "user" in request.args:
+        owner_id = request.args.get('user')
+        userEntries = Blog.query.filter_by(owner_id=owner_id)
+        username = User.query.get(owner_id)
+
+        return render_template('singleUser.html', page_title = "user contributions", userEntries = userEntries, user = username)
+
     # displays template posts which displays all entries in descending order
     return render_template('posts.html', page_title="blog", entries = entries)
 
@@ -197,7 +206,7 @@ def add_entry():
     # if there are no errors, adds new entry to the database and redirects user to entries template
     if not title_error and not body_error:
         if request.method == "POST":
-            title_name = request.form["title"] # Is this needed?
+            title_name = request.form["title"] 
             body_name = request.form["body"]
             owner = User.query.filter_by(username =session['username']).first()
             new_entry = Blog(title_name, body_name, owner) 

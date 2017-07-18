@@ -1,3 +1,4 @@
+<!-- This template lists all blog entries in descending order -->
 {% extends "base.html" %} {% block content %}
 <h1>Build a Blog</h1>
 {% if entries|length == 0 %}
@@ -13,9 +14,8 @@
         </a>
     </li>
     <li>{{entry.body}}</li>
-    <li>written by {{entry.owner.username}}</li>
-    <!-- TODO - cross reference this to username - SQL subquery for foreign key -->
-    </hr>
+    <li><a href="./blog?user={{entry.owner_id}}">written by {{entry.owner.username}}</a></li>
+    <hr></hr>
     {% endfor %}
 </ul>
 <a class="bottom" href="#top">top of page</a> {% endif %} {% endblock %}

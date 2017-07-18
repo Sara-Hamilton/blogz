@@ -2,12 +2,12 @@
     background-color: firebrick;
     font-weight: bold;
     color: #d6d6ba;
-    margin: 0em 40em 1em 9em;
+    margin: 0em 35em 1em 4em;
     text-align: center
 }
 
 label {
-    margin: 0 9em 0 9em;
+    margin: 0 4em 0 4em;
 }
 
 .label2 {
@@ -17,8 +17,9 @@ label {
 
 body {
     font-family: Verdana;
-    margin: 0 25em 0 25em;
+    margin: auto;
     color: #d6d6ba;
+    width: 50%;
 }
 
 nav a {
@@ -26,9 +27,9 @@ nav a {
     text-align: center;
 }
 
-li:nth-child(even) {
-    border-bottom: groove gray;
-    color: #d6d6ba;
+hr {
+    border-top: 1px solid gray;
+    border-bottom: 1px solid #d6d6ba;
 }
 
 nav {
@@ -39,7 +40,6 @@ nav {
 
 h1 {
     text-align: center;
-    margin: auto;
     padding: 2em 2em 1em 2em;
 }
 
@@ -101,4 +101,22 @@ h2:hover,
 a:visited.btn,
 a:visited.bottom {
     color: #d6d6ba;
+}
+
+.bloggers {
+    text-align: center;
+    margin-right: 2em;
+}
+
+.login {
+    margin: 50px;
+}
+
+table {
+    margin: 30px 50px 50px 50px;
+}
+
+.create {
+    padding: 0 0 0 10em;
+    margin-bottom: 10em;
 }
