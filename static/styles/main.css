@@ -116,7 +116,13 @@ table {
     margin: 30px 50px 50px 50px;
 }
 
-.create {
-    padding: 0 0 0 10em;
-    margin-bottom: 10em;
+#create {
+    display: inline-block;
+    text-align: center;
+    margin-left: 20em;
+    margin-top: 5em;
+}
+
+ul {
+    list-style-type: none;
 }
