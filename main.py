@@ -1,5 +1,6 @@
 from flask import Flask, request, redirect, render_template, session, flash
 from flask_sqlalchemy import SQLAlchemy
+from hashutils import make_pw_hash, check_pw_hash
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
@@ -26,12 +27,12 @@ class User(db.Model):
     
     id = db.Column(db.Integer, primary_key = True)
     username = db.Column(db.String(100), unique = True)
-    password = db.Column(db.String(30))
+    pw_hash = db.Column(db.String(120))
     blogs = db.relationship('Blog', backref = 'owner')
 
     def __init__(self, username, password):
         self.username = username
-        self.password = password
+        self.pw_hash = make_pw_hash(password)
 
 
 @app.before_request
@@ -54,22 +55,22 @@ def signup():
     users = User.query.all()
     existing = User.query.filter_by(username=username).first()
 
-    # verification that username is filled in, is more than 3 characters long, and does not match a username in the database
+    # verification that username is filled in, is at least 3 characters long, and does not match a username in the database
     if username == "":
         username_error = "Name field cannot be blank"
-    elif len(username) <= 3:
-        username_error = "Name must be at least four characters long"
+    elif len(username) < 3:
+        username_error = "Name must be at least three characters long"
     elif existing != None:
         username_error = "That username already exists.  Enter a different username."
         # TODO - make this work - make user name unique
     else:        
         username_error = ""
 
-    # verification that password is filled in and is more than 3 characters long
+    # verification that password is filled in and is at least 3 characters long
     if password == "" and existing == None:
         password_error = "Password field cannot be blank"
-    elif len(password) <= 3 and existing == None:
-        password_error = "Password must be at least four characters long"
+    elif len(password) < 3 and existing == None:
+        password_error = "Password must be at least three characters long"
     else:
         password_error = ""
 
@@ -105,7 +106,7 @@ def login():
     username = request.form["username"]
     password = request.form["password"]
     existing = User.query.filter_by(username=username).first()
-    user_password = User.query.filter_by(password=password).first()
+    # user_password = User.query.filter_by(password=password).first()
     users = User.query.all()
     user = User.query.filter_by(username=username).first()
 
@@ -118,17 +119,20 @@ def login():
         username_error = ""
 
     # verification that password is filled in and matches the password for the given user in the database
-    if password == "":
+    if password == "" and existing != None:
         password_error = "password cannot be blank" 
-    elif password != user.password and existing != None:
-        password_error = "incorrect password"
+    #elif password != user.password and existing != None:
+    elif existing != None:
+        if not check_pw_hash(password, user.pw_hash):
+            password_error = "incorrect password"
     else:
         password_error = ""
     
     # if there are no errors, creates new session and redirects user to newpost template
     if username_error == "" and  password_error == "":
         if request.method == 'POST':
-            if user and user.password == password:
+            #if user and user.password == password:
+            if user and check_pw_hash(password, user.pw_hash):
                 session['username'] = username
                 flash("logged in")
                 return redirect('/newpost') 
