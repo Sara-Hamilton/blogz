@@ -62,7 +62,6 @@ def signup():
         username_error = "Name must be at least three characters long"
     elif existing != None:
         username_error = "That username already exists.  Enter a different username."
-        # TODO - make this work - make user name unique
     else:        
         username_error = ""
 
@@ -82,7 +81,7 @@ def signup():
     else:
         verify_error = ""
 
-    # if there are no errors, adds new user to the database, creates a new session, and redirects user to /newpost template
+    # if there are no errors, adds new user to the database, creates a new session, and redirects user to newpost template
     if not username_error and not password_error and not verify_error:
         if request.method == "POST":
             new_user = User(username, password)
@@ -106,11 +105,10 @@ def login():
     username = request.form["username"]
     password = request.form["password"]
     existing = User.query.filter_by(username=username).first()
-    # user_password = User.query.filter_by(password=password).first()
     users = User.query.all()
     user = User.query.filter_by(username=username).first()
 
-    # verification that user name is filled in and matches a user name in the database
+    # verification that username is filled in and matches a username in the database
     if username == "":
         username_error = "name field cannot be blank"
     elif existing == None:
@@ -121,17 +119,15 @@ def login():
     # verification that password is filled in and matches the password for the given user in the database
     if password == "" and existing != None:
         password_error = "password cannot be blank" 
-    #elif password != user.password and existing != None:
     elif existing != None:
         if not check_pw_hash(password, user.pw_hash):
             password_error = "incorrect password"
-    else:
-        password_error = ""
+        else:
+            password_error = ""
     
     # if there are no errors, creates new session and redirects user to newpost template
     if username_error == "" and  password_error == "":
         if request.method == 'POST':
-            #if user and user.password == password:
             if user and check_pw_hash(password, user.pw_hash):
                 session['username'] = username
                 flash("logged in")
