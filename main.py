@@ -53,30 +53,30 @@ def signup():
     password = request.form["password"]
     verify = request.form["verify"]
     users = User.query.all()
-    existing = User.query.filter_by(username=username).first()
+    user = User.query.filter_by(username=username).first()
 
     # verification that username is filled in, is at least 3 characters long, and does not match a username in the database
     if username == "":
         username_error = "Name field cannot be blank"
     elif len(username) < 3:
         username_error = "Name must be at least three characters long"
-    elif existing != None:
+    elif user != None:
         username_error = "That username already exists.  Enter a different username."
     else:        
         username_error = ""
 
     # verification that password is filled in and is at least 3 characters long
-    if password == "" and existing == None:
+    if password == "" and user == None:
         password_error = "Password field cannot be blank"
-    elif len(password) < 3 and existing == None:
+    elif len(password) < 3 and user == None:
         password_error = "Password must be at least three characters long"
     else:
         password_error = ""
 
     # verification that verify password field is filled in and matches password
-    if verify == "" and existing == None:
+    if verify == "" and user == None:
         verify_error = "Verify Password field cannot be blank"
-    elif verify != password and existing == None:
+    elif verify != password and user == None:
         verify_error = "Passwords do not match"
     else:
         verify_error = ""
@@ -104,27 +104,26 @@ def login():
     # define variables using form entries and database queries
     username = request.form["username"]
     password = request.form["password"]
-    existing = User.query.filter_by(username=username).first()
-    users = User.query.all()
     user = User.query.filter_by(username=username).first()
+    users = User.query.all()
 
     # verification that username is filled in and matches a username in the database
     if username == "":
         username_error = "name field cannot be blank"
-    elif existing == None:
+    elif user == None:
         username_error = "user name not registered"
     else:        
         username_error = ""
 
     # verification that password is filled in and matches the password for the given user in the database
-    if password == "" and existing != None:
+    if password == "" and user != None:
         password_error = "password cannot be blank" 
-    elif existing != None:
+    elif user != None:
         if not check_pw_hash(password, user.pw_hash):
             password_error = "incorrect password"
         else:
             password_error = ""
-    elif existing == None:
+    elif user == None:
         password_error = ""
     
     # if there are no errors, creates new session and redirects user to newpost template
