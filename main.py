@@ -124,6 +124,8 @@ def login():
             password_error = "incorrect password"
         else:
             password_error = ""
+    elif existing == None:
+        password_error = ""
     
     # if there are no errors, creates new session and redirects user to newpost template
     if username_error == "" and  password_error == "":
