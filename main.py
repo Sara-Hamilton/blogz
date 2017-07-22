@@ -52,7 +52,6 @@ def signup():
     username = request.form["username"]
     password = request.form["password"]
     verify = request.form["verify"]
-    users = User.query.all()
     user = User.query.filter_by(username=username).first()
 
     # verification that username is filled in, is at least 3 characters long, and does not match a username in the database
@@ -60,23 +59,23 @@ def signup():
         username_error = "Name field cannot be blank"
     elif len(username) < 3:
         username_error = "Name must be at least three characters long"
-    elif user != None:
+    elif user: 
         username_error = "That username already exists.  Enter a different username."
-    else:        
+    else:
         username_error = ""
 
     # verification that password is filled in and is at least 3 characters long
-    if password == "" and user == None:
+    if password == "" and not user: 
         password_error = "Password field cannot be blank"
-    elif len(password) < 3 and user == None:
+    elif len(password) < 3 and not user: 
         password_error = "Password must be at least three characters long"
     else:
         password_error = ""
 
     # verification that verify password field is filled in and matches password
-    if verify == "" and user == None:
+    if verify == "" and not user: 
         verify_error = "Verify Password field cannot be blank"
-    elif verify != password and user == None:
+    elif verify != password and not user: 
         verify_error = "Passwords do not match"
     else:
         verify_error = ""
@@ -105,25 +104,24 @@ def login():
     username = request.form["username"]
     password = request.form["password"]
     user = User.query.filter_by(username=username).first()
-    users = User.query.all()
 
     # verification that username is filled in and matches a username in the database
     if username == "":
         username_error = "name field cannot be blank"
-    elif user == None:
+    elif not user: 
         username_error = "user name not registered"
     else:        
         username_error = ""
 
     # verification that password is filled in and matches the password for the given user in the database
-    if password == "" and user != None:
+    if password == "" and user: 
         password_error = "password cannot be blank" 
-    elif user != None:
+    elif user: 
         if not check_pw_hash(password, user.pw_hash):
             password_error = "incorrect password"
         else:
             password_error = ""
-    elif user == None:
+    elif not user: 
         password_error = ""
     
     # if there are no errors, creates new session and redirects user to newpost template
@@ -136,7 +134,8 @@ def login():
 
     # re-renders login template with appropriate error messages if login errors exist
     else:
-        return render_template('login.html', page_title = "login", username = username, username_error = username_error, password_error = password_error)
+        return render_template('login.html', page_title = "login", username = username, 
+            username_error = username_error, password_error = password_error)
 
 
 
@@ -196,7 +195,6 @@ def add_entry():
         title_error = "" 
 
     # verification that body is filled in
-    body = request.form["body"]
     if body == "":
         body_error = "Blog entry must have content."
     elif len(body) > 5000:
@@ -207,10 +205,8 @@ def add_entry():
     # if there are no errors, adds new entry to the database and redirects user to entries template
     if not title_error and not body_error:
         if request.method == "POST":
-            title_name = request.form["title"] 
-            body_name = request.form["body"]
             owner = User.query.filter_by(username =session['username']).first()
-            new_entry = Blog(title_name, body_name, owner) 
+            new_entry = Blog(title, body, owner) 
             db.session.add(new_entry)
             db.session.commit()
         
