@@ -6,17 +6,16 @@
         <tr>
             <td><label for="username">Name</label></td>
             <td>
-                <input name="username" type="text" value="{{username}}">
+                <input class="entry" name="username" type="text" value="{{username}}">
             </td>
             <td>
                 <p class="error">{{username_error}}</p>
-                <p><a href="/signup" id="create" class="btn">Create New Account</a></p>
             </td>
         </tr>
         <tr>
             <td><label for="password">Password</label></td>
             <td>
-                <input name="password" type="password" , value="{{password}}">
+                <input class="entry" name="password" type="password" , value="{{password}}">
             </td>
             <td>
                 <p class="error">{{password_error}}</p>
@@ -24,5 +23,6 @@
         </tr>
     </table>
     <input class="button" class="login" type="submit" value="Login">
+    <a href="/signup" id="create" class="btn">Create New Account</a>
 </form>
 {% endblock %}

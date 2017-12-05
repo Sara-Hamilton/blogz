@@ -8,29 +8,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>{{page_title}}</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="/static/styles/main.css" />
 </head>
 
-<header>
-    <a name="top"></a>
-    <nav>
-        <a href="/" class="btn">home</a>
-        <a href="/blog" class="btn">all posts</a>
-        <a href="/newpost" class="btn">new post</a>
-        <a href="/login" class="btn">login</a>
-        <a href="/logout" class="btn">logout</a>
-    </nav>
-</header>
+<div class="container">
+    <header>
+        <a name="top"></a>
+        <nav>
+            <a href="/" class="btn">home</a>
+            <a href="/blog" class="btn">all posts</a>
+            <a href="/newpost" class="btn">new post</a>
+            <a href="/login" class="btn">login</a>
+            <a href="/logout" class="btn">logout</a>
+        </nav>
+    </header>
 
-<body>
-    <!-- Allows for the use of flash messages -->
-    {% with messages = get_flashed_messages(with_categories=True) %}
-    <ul>
-        {% for category,message in messages %}
-        <li class="{{category}}">{{message}}</li>
-        {% endfor %}
-    </ul>
-    {% endwith %} {% block content %} {% endblock %}
-</body>
+
+    <body>
+        <!-- Allows for the use of flash messages -->
+        {% with messages = get_flashed_messages(with_categories=True) %}
+        <ul>
+            {% for category,message in messages %}
+            <li class="{{category}}">{{message}}</li>
+            {% endfor %}
+        </ul>
+        {% endwith %} {% block content %} {% endblock %}
+</div>
 
 </html>
