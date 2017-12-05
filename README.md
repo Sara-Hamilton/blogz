@@ -9,6 +9,7 @@ This is a project for unit 2 of LaunchCode LC 101.  It is an extension of the Bu
 * SQLAlchemy
 * HTML
 * CSS
+* Bootstrap
 
 ## Functionality
 
